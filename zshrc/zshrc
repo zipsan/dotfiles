@@ -1,0 +1,275 @@
+# ====================
+# +  zipsan's zshrc  +
+# ====================
+ZSHRC_BASE_DIR="$HOME/settings/zshrc"
+
+
+
+# ===================
+#  Environment
+# ===================
+export PATH=$PATH
+
+
+
+# ===================
+#  load modules
+# ===================
+source ${ZSHRC_BASE_DIR}/modules/*
+
+
+
+# ====================
+#  base setting
+# ====================
+# -*- options -*-
+setopt promptsubst
+setopt auto_param_slash
+setopt mark_dirs
+setopt list_types
+setopt auto_menu
+setopt auto_param_keys
+setopt interactive_comments
+setopt magic_equal_subst
+setopt complete_in_word
+setopt always_last_prompt
+setopt print_eight_bit
+setopt extended_glob
+setopt globdots
+
+
+
+# ====================
+#  History
+# ====================
+HISTCONTROL=ignoredups:ignorespace
+HISTFILE=$HOME/.zsh-history
+HISTSIZE=100000
+SAVEHIST=100000
+
+
+
+# ====================
+#  Prompt(PS)
+# ====================
+FIRSTLINE_COLOR=yellow
+MAINLINE_COLOR=cyan
+SSH_MESSAGE_COLOR=blue
+STATUS_OK_COLOR=cyan
+STATUS_OK_PROMPT=":)"
+STATUS_NG_COLOR=red
+STATUS_NG_PROMPT=":("
+
+COLOR_SETTING_FILEPATH="${ZSHRC_BASE_DIR}/terminal_color_settings"
+if [ -e $COLOR_SETTING_FILEPATH ]; then
+  source $COLOR_SETTING_FILEPATH
+fi
+
+if [ -n "${SSH_CLIENT}" ]; then
+  SSH_HOST=`echo ${SSH_CLIENT} | cut -d' ' -f1`
+  SSH_MESSAGE="(ssh from: ${SSH_HOST})"
+else
+  SSH_MESSAGE=""
+fi
+
+STATUS_PROMPT="%(?.%F{${STATUS_OK_COLOR}}${STATUS_OK_PROMPT}%f.%F{${STATUS_NG_COLOR}}${STATUS_NG_PROMPT}%f)"
+
+PS1="%F{${FIRSTLINE_COLOR}}20%D %* >> %d%f
+%F{${MAINLINE_COLOR}}[${USER}@${HOST%%.*}]${STATUS_PROMPT}%F{${MAINLINE_COLOR}}%(!.#.$)%f "
+
+RPROMPT="%F{${SSH_MESSAGE_COLOR}}${SSH_MESSAGE}%f"
+
+
+
+# ====================
+#  Color
+# ====================
+export LSCOLORS=exfxcxdxbxegedabagacad
+export LS_COLORS='di=34:ln=35:so=32:pi=33:ex=31:bd=46;34:cd=43;34:su=41;30:sg=46;30:tw=42;30:ow=43;30'
+
+
+
+# ====================
+#  Aliases
+# ====================
+# -*- change default -*-
+alias ls='ls --color=auto -F'
+alias ps="ps --sort=start_time"
+alias grep="grep --color=auto"
+
+
+# -*- lazy commands -*-
+alias l='ls --color=auto -F'
+alias ll='ls -lAF --color=auto'
+alias cl='clear'
+alias py='python'
+alias py2='python2'
+alias py3='python3'
+alias df='df -h'
+
+
+# -*- useful commands -*-
+alias aslron='sudo sysctl -w kernel.randomize_va_space=2'
+alias aslroff='sudo sysctl -w kernel.randomize_va_space=0'
+alias psg='ps aux | grep -i'
+alias findr='sudo find / -name'
+alias loadzsh='source ~/.zshrc'
+alias vimzsh='vim ~/.zshrc'
+alias vimvim='vim ~/.vimrc'
+alias cdn='cd `find -mindepth 1 -maxdepth 1 -type d | xargs ls -td | head -n 1`' # cd to the latest created dir
+alias wget-recursive="wget \
+--recursive \
+--no-clobber \
+--page-requisites \
+--html-extension \
+--convert-links \
+--restrict-file-names=windows \
+--no-parent \
+--domains"
+alias ..='cd ../'
+alias ../='cd ../'
+alias ../../='cd ../../'
+alias ../../../='cd ../../../'
+alias ../../../../='cd ../../../../'
+alias ../../../../../='cd ../../../../../'
+
+# -*- for typo -*-
+alias sudp='sudo'
+
+# -*- for git -*-
+alias gitpsom='git push origin master'
+alias gitplom='git pull origin master'
+alias gitplum='git pull upstream master'
+alias gitpsod='git push origin develop'
+alias gitplod='git pull origin develop'
+alias gitplud='git pull upstream develop'
+
+alias gitc='git commit -m'
+alias gitb='git branch'
+alias gits='git status'
+alias gitcho='git checkout '
+alias gitm='git merge'
+
+# -*- for MacOS -*-
+if [ "$(uname)" = 'Darwin' ]; then
+    alias ls='ls -oFG'
+    alias grep="grep --color=always"
+    alias l='ls -oFG'
+    alias ll='ls -lAFoG'
+    alias ps="ps"
+fi
+
+# ====================
+#  Completion
+# ====================
+# -*- default -*-
+autoload -U compinit
+zstyle ':completion:*:default' menu select=1
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
+zstyle ':completion:*:messages' format '%F{YELLOW}%d'$DEFAULT
+zstyle ':completion:*:warnings' format '%F{RED}No matches for:''%F{YELLOW} %d'$DEFAULT
+zstyle ':completion:*:descriptions' format '%F{YELLOW}completing %B%d%b'$DEFAULTzstyle ':completion:*:options' description 'yes'
+zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'$DEFAULT
+zstyle ':completion:*' list-separator '-->'
+zstyle ':completion:*:manuals' separate-sections true
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z} r:|[-_.]=**'
+
+
+
+# ===============
+#  Keybindings
+# ===============
+# -*- binding -*-
+stty stop undef
+stty -ixon -ixoff
+bindkey -r "^s"
+bindkey -r "^j"
+bindkey -r "^k"
+bindkey "^h" backward-word
+bindkey "^l" forward-word
+bindkey "^[OH" beginning-of-line  # HOME
+bindkey "^[OF" end-of-line  # END
+bindkey "^[[3~" delete-char  # DEL
+
+
+# -*- known_hosts -*-
+autoload -U compinit && compinit
+function print_known_hosts (){ 
+  if [ -f $HOME/.ssh/known_hosts ]; then
+    cat $HOME/.ssh/known_hosts | tr ',' ' ' | cut -d' ' -f1 
+  fi
+}
+_cache_hosts=($( print_known_hosts ))
+
+
+# -*- cheat-sheet -*-
+cheat-sheet () { zle -M "`cat ${ZSHRC_BASE_DIR}/cheat-sheet/cheat-sheet.conf`" }
+zle -N cheat-sheet
+bindkey "^[^h" cheat-sheet
+git-cheat () { zle -M "`cat ${ZSHRC_BASE_DIR}/cheat-sheet/git-cheat.conf`" }
+zle -N git-cheat
+bindkey "^[^g" git-cheat
+
+
+# -*- ls with Enter key -*-
+enter_ls() {
+  zle accept-line
+  if [[ -z "$BUFFER" ]]; then
+    echo
+    ls_abbrev
+  fi
+}
+zle -N enter_ls
+bindkey "^m" enter_ls
+
+
+
+# ===============================
+#  extra customize (each os/env)
+# ===============================
+LOCAL_SETTINGS_FILEPATH="${ZSHRC_BASE_DIR}/local_settings"
+if [ -e $LOCAL_SETTINGS_FILEPATH ]; then
+  source $LOCAL_SETTINGS_FILEPATH
+fi
+
+
+# ===============================
+#  modules
+# ===============================
+ls_abbrev() {
+    if [[ ! -r $PWD ]]; then
+        return
+    fi
+    # -a : Do not ignore entries starting with ..
+    # -C : Force multi-column output.
+    # -F : Append indicator (one of */=>@|) to entries.
+    local cmd_ls='ls'
+    local -a opt_ls
+    opt_ls=('-ACF' '--color=always')
+    case "${OSTYPE}" in
+        freebsd*|darwin*)
+            if type gls > /dev/null 2>&1; then
+                cmd_ls='gls'
+            else
+                # -G : Enable colorized output.
+                opt_ls=('-ACFG')
+            fi
+            ;;
+    esac
+
+    local ls_result
+    ls_result=$(CLICOLOR_FORCE=1 COLUMNS=$COLUMNS command $cmd_ls ${opt_ls[@]} | sed $'/^\e\[[0-9;]*m$/d')
+
+    local ls_lines=$(echo "$ls_result" | wc -l | tr -d ' ')
+
+    if [ $ls_lines -gt 6 ]; then
+        echo "$ls_result" | head -n 3
+        echo '...'
+        echo "$ls_result" | tail -n 3
+        echo "$(command ls -1 -A | wc -l | tr -d ' ') files exist"
+    else
+        echo "$ls_result"
+    fi
+}
+function chpwd() { ls_abbrev }  # ls after cd

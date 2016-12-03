@@ -1,0 +1,342 @@
+" ====================
+" +  zipsan's vimrc  +
+" ====================
+
+
+
+" ==================
+"  general settings
+" ==================
+" -*- base -*-
+set incsearch
+set nocompatible
+set history=10000
+set backspace=indent,eol,start
+set viminfo='20,\"50
+set wildmode=list:full,longest  " completion of filelist
+set whichwrap=b,s,h,l,<,>,[,]
+let &guicursor = &guicursor . ",a:blinkon0"
+nnoremap x "_x
+set vb t_vb=  "disable beep
+
+" -*- indent/space/tab -*-
+set smarttab
+set expandtab
+set tabstop=4
+set shiftwidth=4
+set softtabstop=0
+set smartindent
+set cindent
+autocmd FileType python setlocal tabstop=4
+
+
+" -*- Appearance -*-
+set title
+set ruler
+set number
+set cursorline
+set ambiwidth=double  " for double byte character
+set t_Co=256
+set splitright
+
+set laststatus=2  " show statusline
+set statusline=%F%r%h%=
+set display=lastline
+set showmatch
+
+set list  " show invisible characters 
+set listchars=tab:\ >,trail:_,extends:>,precedes:<,nbsp:%
+
+" show zenkaku_space
+function! ZenkakuSpace()
+  highlight ZenkakuSpace cterm=underline ctermfg=darkgrey gui=underline guifg=darkgrey
+endfunction
+if has('syntax')
+  augroup ZenkakuSpace
+    autocmd!
+    autocmd ColorScheme       * call ZenkakuSpace()
+    autocmd VimEnter,WinEnter * match ZenkakuSpace /　/
+  augroup END
+  call ZenkakuSpace()
+endif
+
+
+" -*- file -*-
+filetype plugin on
+filetype indent on
+
+if v:lang =~ "utf8$" || v:lang =~ "UTF-8$"
+   set fileencodings=utf-8,ucs-bom,latin1,iso-2022-jp,cp932
+endif
+autocmd BufRead,BufNewFile *.md set filetype=markdown
+
+
+
+" ------------------------------------------
+"  auto exec command when an event occured
+" ------------------------------------------
+" -*- event hook -*-
+if has("autocmd")
+  augroup last
+    autocmd!
+    " memory the last position
+    autocmd BufReadPost *
+    \ if line("'\"") > 0 && line ("'\"") <= line("$") |
+    \   exe "normal! g'\"" |
+    \ endif
+    " control creation of a swapfile (settings of ignore directories)
+    autocmd BufNewFile,BufReadPre /media/*,/mnt/* set directory=~/tmp,/var/tmp,/tmp
+    autocmd BufNewFile *.spec 0r /usr/share/vim/vimfiles/template.spec
+  augroup END
+endif
+
+" -*- brackets completion -*-
+function! DeleteParenthesesAdjoin()
+    let pos = col(".") - 1  " カーソルの位置．1からカウント
+    let str = getline(".")  " カーソル行の文字列
+    let parentLList = ["(", "[", "{", "\'", "\""]
+    let parentRList = [")", "]", "}", "\'", "\""]
+    let cnt = 0
+
+    let output = ""
+
+    " カーソルが行末の場合
+    if pos == strlen(str)
+        return "\b"
+    endif
+    for c in parentLList
+        " カーソルの左右が同種の括弧
+        if str[pos-1] == c && str[pos] == parentRList[cnt]
+            call cursor(line("."), pos + 2)
+            let output = "\b"
+            break
+        endif
+        let cnt += 1
+    endfor
+    return output."\b"
+endfunction
+
+function! IgnoreRightBracket(chr)
+    " 何故かbeep音がなる..
+    let pos = col(".") - 1
+    let str = getline(".")  " カーソル行の文字列
+    let parentLList = ["(", "[", "{", "\'", "\""]
+    let parentRList = [")", "]", "}", "\'", "\""]
+    let cnt = 0
+    let output = a:chr
+
+    for c in parentLList
+        if str[pos] == parentRList[cnt] && a:chr == parentRList[cnt]
+            call cursor(line("."), pos + 2)
+            let output = ""
+            break
+        endif
+        let cnt += 1
+    endfor
+    return output
+endfunction
+
+function! EnterBracket(chr)
+    let pos = col(".") - 1
+    let str = getline(".")
+    let parentLList = ["(", "[", "{", "\'", "\""]
+    let parentRList = [")", "]", "}", "\'", "\""]
+    let output = a:chr
+
+    let Lbracket_num = 0
+    let Rbracket_num = 0
+    let i = 0
+    let cnt = 0
+    for c in parentLList
+        while a:chr == c && i < strlen(str)
+            if str[i] == parentLList[cnt]
+                let Lbracket_num += 1
+            endif
+            if str[i] == parentRList[cnt]
+                let Rbracket_num += 1
+            endif
+            let i += 1
+        endwhile
+        let cnt += 1
+    endfor
+
+    let cnt = 0
+    for c in parentLList
+        if a:chr == c && Lbracket_num >= Rbracket_num
+            let output = output.parentRList[cnt]
+            break
+        endif
+        let cnt += 1
+    endfor
+    return output
+endfunction
+
+"inoremap { <Left>
+inoremap {<Enter> {}<Left><CR><ESC><S-o>
+"inoremap ( ()<Left>
+inoremap (<Enter> ()<Left><CR><ESC><S-o>
+"inoremap [ []<Left>
+
+inoremap <silent> <BS> <C-R>=DeleteParenthesesAdjoin()<CR>
+
+inoremap <silent> [ <C-R>=EnterBracket("[")<CR><Left>
+inoremap <silent> ] <C-R>=IgnoreRightBracket("]")<CR>
+inoremap <silent> ( <C-R>=EnterBracket("(")<CR><Left>
+inoremap <silent> ) <C-R>=IgnoreRightBracket(")")<CR>
+inoremap <silent> { <C-R>=EnterBracket("{")<CR><Left>
+inoremap <silent> } <C-R>=IgnoreRightBracket("}")<CR>
+
+inoremap <silent> ' <C-R>=IgnoreRightBracket("\'")<CR>
+inoremap <silent> " <C-R>=IgnoreRightBracket("\"")<CR>
+
+
+
+" -------------
+"  Bundles
+" -------------
+" -*- Neobundle -*-
+filetype off
+if has('vim_starting')
+set runtimepath+=~/.vim/bundle/neobundle.vim/
+  call neobundle#begin(expand('~/.vim/bundle/'))
+    NeoBundleFetch 'Shougo/neobundle.vim'
+    NeoBundle 'Shougo/neobundle.vim'
+    NeoBundle 'Shougo/vimproc'
+    NeoBundle 'Shougo/neocomplcache'
+    NeoBundle 'derekwyatt/vim-scala'
+    NeoBundle 'Shougo/vimshell'
+    NeoBundle 'bling/vim-airline'
+    NeoBundle 'scrooloose/nerdtree'
+    NeoBundle 'davidhalter/jedi-vim'
+    NeoBundle 'tomtom/tcomment_vim'
+    NeoBundle 'Shougo/unite.vim'
+    NeoBundle 'majutsushi/tagbar'
+    NeoBundle 'terryma/vim-multiple-cursors'
+    NeoBundle 'thinca/vim-quickrun'
+    NeoBundle 'plasticboy/vim-markdown'
+    NeoBundle 'kannokanno/previm'
+    NeoBundle 'tyru/open-browser.vim'
+  call neobundle#end()
+endif
+
+
+
+" --------------------------
+"  settings fot some tools
+" --------------------------
+" -*- ctags -*-
+if has("ctags") && filereadable("/usr/bin/ctags")
+  set csprg=/usr/bin/ctags
+  set csto=0
+  set cst
+  set nocsverb
+  if filereadable("cscope.out")
+    cs add cscope.out
+  elseif $CSCOPE_DB != ""
+    cs add $CSCOPE_DB
+  endif
+  set csverb
+endif
+
+
+" -*- for syntax highlighting -*- 
+if &t_Co > 2 || has("gui_running")
+  syntax on
+  set hlsearch
+endif
+
+
+" -*- neocomplcache / jedi -*-
+autocmd BufRead *.php\|*.ctp\|*.tpl :set dictionary=~/.vim/dictionary/php.dict filetype=php
+autocmd FileType javascript :set dictionary=~/.vim/dictionary/Javascript.dict
+autocmd FileType python setlocal completeopt-=preview
+autocmd BufNewFile,BufRead *.scala :set dictionary=~/.vim/dictionary/scala.dict filetype=scala
+autocmd BufNewFile,BufRead *.scala setf scala
+
+let g:neocomplcache_enable_at_startup = 1
+let g:neocomplcache_enable_camel_case_completion = 1
+let g:neocomplcache_enable_underbar_completion = 1
+let g:neocomplcache_smart_case = 1
+let g:neocomplcache_min_syntax_length = 3
+let g:neocomplcache_manual_completion_start_length = 1
+let g:neocomplcache_caching_percent_in_statusline = 1
+let g:neocomplcache_enable_skip_completion = 1
+let g:neocomplcache_caching_percent_in_statusline_skip_input_time = '0.5'
+let g:neocomplcache_enable_insert_char_pre = 1
+let g:neocomplcache_enable_auto_select = 0
+
+inoremap <expr><CR>  pumvisible() ? neocomplcache#close_popup() : "<CR>"
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>"
+
+let g:jedi#completions_enabled = 0
+
+
+" -*- Quickrun -*-
+let g:quickrun_config={
+\  '*': {
+\    'split': ':botright 10sp',
+\    'outputter/buffer/running_mark': '-*- Running... -*-',
+\    'outputter/buffer/into': '-*- Finished -*-',
+\    'hook/time/enable': 1,
+\    'runner': 'vimproc',
+\    "runner/vimproc/updatetime" : 10,
+\  }
+\}
+nnoremap <silent> <C-r> :QuickRun<CR>
+autocmd BufRead,BufNewFile *.md nnoremap <silent> <C-r> :PrevimOpen<CR>
+nnoremap <expr><silent> <C-c> quickrun#is_running() ? quickrun#sweep_sessions() : "\<C-w>b:quit<CR>:echohl WarningMsg<CR>:echo 'Process aborted by user interrupt'<CR>:echohl None<CR>"
+set splitbelow
+let g:quickrun_config.cpp = {
+\   'command': 'g++',
+\   'cmdopt': '-std=c++11'
+\}
+
+let g:vimshell_popup_command = "vsplit"
+function! ScalaSettings()
+    let g:vimshell_disable_escape_highlight = 1
+    nnoremap <silent> <C-r> :VimShellSendString run <CR>
+    nnoremap <silent> <S-r> :VimShellSendString test <CR>
+    nnoremap <silent> <C-s> :VimShellInteractive /bin/zsh <CR>
+endfunction
+
+autocmd BufNewFile,BufRead *.scala :call ScalaSettings()
+
+
+" ==========================
+"  extra color appearance
+" ==========================
+highlight Pmenu ctermbg=Gray ctermfg=Black
+highlight PmenuSel ctermbg=DarkBlue ctermfg=White
+highlight PmenuSbar ctermbg=DarkGreen ctermfg=White
+highlight CursorLine cterm=Bold ctermbg=None
+highlight SpecialKey guibg=NONE guifg=Gray
+highlight Comment ctermfg=DarkBlue
+highlight MatchParen cterm=underline,bold ctermbg=None ctermfg=magenta
+
+
+" ==================
+"  Key binding
+" ==================
+set <xUp>=OA
+set <xDown>=OB
+set <xRight>=OC
+set <xLeft>=OD
+inoremap <C-j> <Down>
+inoremap <C-k> <Up>
+inoremap <C-h> <Left>
+inoremap <C-l> <Right>
+nnoremap <C-s> :VimShellPop<CR>
+nmap <silent> <C-\> :nohlsearch<CR>
+nnoremap <silent><C-e> :NERDTreeToggle<CR>
+nnoremap <silent><C-i> :TagbarToggle<CR>
+nnoremap <silent><C-t> :tabnew<CR>
+nnoremap <silent><C-q> :q<CR>
+nnoremap <silent>\[ :tabp<CR>
+noremap <silent>\] :tabn<CR>
+nnoremap j gj
+nnoremap k gk
+nnoremap <C-y> :redo<CR>
+let g:multi_cursor_next_key='<C-d>'
+nnoremap <silent><C-p> :set paste<CR>
+nnoremap <silent><S-p> :set nopaste<CR>
