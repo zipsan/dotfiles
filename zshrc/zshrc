@@ -1,7 +1,7 @@
 # ====================
 # +  zipsan's zshrc  +
 # ====================
-ZSHRC_BASE_DIR="$HOME/settings/zshrc"
+ZSHRC_BASE_DIR="$HOME/Documents/dotfiles/zshrc"
 
 
 
@@ -9,13 +9,13 @@ ZSHRC_BASE_DIR="$HOME/settings/zshrc"
 #  Environment
 # ===================
 export PATH=$PATH
-
+export TERM="screen-256color"
 
 
 # ===================
 #  load modules
 # ===================
-source ${ZSHRC_BASE_DIR}/modules/*
+# source ${ZSHRC_BASE_DIR}/modules/*
 
 
 
@@ -163,13 +163,13 @@ fi
 #  Completion
 # ====================
 # -*- default -*-
-autoload -U compinit
+autoload -U compinit && compinit
 zstyle ':completion:*:default' menu select=1
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
-zstyle ':completion:*:messages' format '%F{YELLOW}%d'$DEFAULT
-zstyle ':completion:*:warnings' format '%F{RED}No matches for:''%F{YELLOW} %d'$DEFAULT
-zstyle ':completion:*:descriptions' format '%F{YELLOW}completing %B%d%b'$DEFAULTzstyle ':completion:*:options' description 'yes'
+zstyle ':completion:*:messages' format '%F{yellow}%d'$DEFAULT
+zstyle ':completion:*:warnings' format '%F{red}No matches for:''%F{yellow} %d'$DEFAULT
+zstyle ':completion:*:descriptions' format '%F{yellow}completing %B%d%b'$DEFAULTzstyle ':completion:*:options' description 'yes'
 zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'$DEFAULT
 zstyle ':completion:*' list-separator '-->'
 zstyle ':completion:*:manuals' separate-sections true
@@ -194,7 +194,6 @@ bindkey "^[[3~" delete-char  # DEL
 
 
 # -*- known_hosts -*-
-autoload -U compinit && compinit
 function print_known_hosts (){ 
   if [ -f $HOME/.ssh/known_hosts ]; then
     cat $HOME/.ssh/known_hosts | tr ',' ' ' | cut -d' ' -f1 
