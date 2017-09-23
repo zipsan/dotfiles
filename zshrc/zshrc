@@ -1,21 +1,21 @@
 # ====================
 # +  zipsan's zshrc  +
 # ====================
-ZSHRC_BASE_DIR="$HOME/Documents/dotfiles/zshrc"
+ZSHRC_BASE_DIR="$HOME/settings/zshrc"
 
 
 
 # ===================
 #  Environment
 # ===================
-export PATH=$PATH
-export TERM="screen-256color"
+export PATH="$PATH:$HOME/.cargo/bin"
+
 
 
 # ===================
 #  load modules
 # ===================
-# source ${ZSHRC_BASE_DIR}/modules/*
+source ${ZSHRC_BASE_DIR}/modules/*
 
 
 
@@ -60,7 +60,7 @@ STATUS_OK_PROMPT=":)"
 STATUS_NG_COLOR=red
 STATUS_NG_PROMPT=":("
 
-COLOR_SETTING_FILEPATH="${ZSHRC_BASE_DIR}/terminal_color_settings"
+COLOR_SETTING_FILEPATH="${ZSHRC_BASE_DIR}/platform_custom/terminal_color_settings"
 if [ -e $COLOR_SETTING_FILEPATH ]; then
   source $COLOR_SETTING_FILEPATH
 fi
@@ -106,6 +106,7 @@ alias py='python'
 alias py2='python2'
 alias py3='python3'
 alias df='df -h'
+function chpwd() { ls_abbrev }  # ls after cd
 
 
 # -*- useful commands -*-
@@ -132,6 +133,13 @@ alias ../../='cd ../../'
 alias ../../../='cd ../../../'
 alias ../../../../='cd ../../../../'
 alias ../../../../../='cd ../../../../../'
+alias ..='cd ../'
+alias ....='cd ../../'
+alias ......='cd ../../../'
+alias ........='cd ../../../../'
+alias ..........='cd ../../../../../'
+alias generate_password='/usr/bin/python -c "import sys;import random;import string; print str.join(str(), [random.choice(string.punctuation + string.ascii_letters + string.digits) for i in range(int(sys.argv[1]))])"'
+alias jsonlint='/usr/bin/python -c "import sys;import json;print json.dumps(json.loads(sys.stdin.read()), ensure_ascii=False, indent=4)"'
 
 # -*- for typo -*-
 alias sudp='sudo'
@@ -150,26 +158,18 @@ alias gits='git status'
 alias gitcho='git checkout '
 alias gitm='git merge'
 
-# -*- for MacOS -*-
-if [ "$(uname)" = 'Darwin' ]; then
-    alias ls='ls -oFG'
-    alias grep="grep --color=always"
-    alias l='ls -oFG'
-    alias ll='ls -lAFoG'
-    alias ps="ps"
-fi
 
 # ====================
 #  Completion
 # ====================
 # -*- default -*-
-autoload -U compinit && compinit
+autoload -U compinit
 zstyle ':completion:*:default' menu select=1
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*' completer _expand _complete _match _prefix _approximate _list _history
-zstyle ':completion:*:messages' format '%F{yellow}%d'$DEFAULT
-zstyle ':completion:*:warnings' format '%F{red}No matches for:''%F{yellow} %d'$DEFAULT
-zstyle ':completion:*:descriptions' format '%F{yellow}completing %B%d%b'$DEFAULTzstyle ':completion:*:options' description 'yes'
+zstyle ':completion:*:messages' format '%F{YELLOW}%d'$DEFAULT
+zstyle ':completion:*:warnings' format '%F{RED}No matches for:''%F{YELLOW} %d'$DEFAULT
+zstyle ':completion:*:descriptions' format '%F{YELLOW}completing %B%d%b'$DEFAULTzstyle ':completion:*:options' description 'yes'
 zstyle ':completion:*:descriptions' format '%F{yellow}Completing %B%d%b%f'$DEFAULT
 zstyle ':completion:*' list-separator '-->'
 zstyle ':completion:*:manuals' separate-sections true
@@ -194,6 +194,7 @@ bindkey "^[[3~" delete-char  # DEL
 
 
 # -*- known_hosts -*-
+autoload -U compinit && compinit
 function print_known_hosts (){ 
   if [ -f $HOME/.ssh/known_hosts ]; then
     cat $HOME/.ssh/known_hosts | tr ',' ' ' | cut -d' ' -f1 
@@ -227,48 +228,11 @@ bindkey "^m" enter_ls
 # ===============================
 #  extra customize (each os/env)
 # ===============================
-LOCAL_SETTINGS_FILEPATH="${ZSHRC_BASE_DIR}/local_settings"
-if [ -e $LOCAL_SETTINGS_FILEPATH ]; then
-  source $LOCAL_SETTINGS_FILEPATH
+# -*- for Environment -*-
+[ -f $ZSHRC_BASE_DIR/platform_custom/alias_`uname` ] && . $ZSHRC_BASE_DIR/platform_custom/alias_`uname`
+
+MACHINE_DEPENDENT_SETTINGS_FILEPATH="${ZSHRC_BASE_DIR}/platform_custom/machine_dependent"
+if [ -e $MACHINE_DEPENDENT_SETTINGS_FILEPATH ]; then
+  source $MACHINE_DEPENDENT_SETTINGS_FILEPATH 2>&1 /dev/null
 fi
 
-
-# ===============================
-#  modules
-# ===============================
-ls_abbrev() {
-    if [[ ! -r $PWD ]]; then
-        return
-    fi
-    # -a : Do not ignore entries starting with ..
-    # -C : Force multi-column output.
-    # -F : Append indicator (one of */=>@|) to entries.
-    local cmd_ls='ls'
-    local -a opt_ls
-    opt_ls=('-ACF' '--color=always')
-    case "${OSTYPE}" in
-        freebsd*|darwin*)
-            if type gls > /dev/null 2>&1; then
-                cmd_ls='gls'
-            else
-                # -G : Enable colorized output.
-                opt_ls=('-ACFG')
-            fi
-            ;;
-    esac
-
-    local ls_result
-    ls_result=$(CLICOLOR_FORCE=1 COLUMNS=$COLUMNS command $cmd_ls ${opt_ls[@]} | sed $'/^\e\[[0-9;]*m$/d')
-
-    local ls_lines=$(echo "$ls_result" | wc -l | tr -d ' ')
-
-    if [ $ls_lines -gt 6 ]; then
-        echo "$ls_result" | head -n 3
-        echo '...'
-        echo "$ls_result" | tail -n 3
-        echo "$(command ls -1 -A | wc -l | tr -d ' ') files exist"
-    else
-        echo "$ls_result"
-    fi
-}
-function chpwd() { ls_abbrev }  # ls after cd

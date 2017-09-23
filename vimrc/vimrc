@@ -216,6 +216,8 @@ set runtimepath+=~/.vim/bundle/neobundle.vim/
     NeoBundle 'plasticboy/vim-markdown'
     NeoBundle 'kannokanno/previm'
     NeoBundle 'tyru/open-browser.vim'
+    NeoBundle 'rust-lang/rust.vim'
+    NeoBundle 'racer-rust/vim-racer'
   call neobundle#end()
 endif
 
@@ -247,8 +249,9 @@ endif
 
 
 " -*- neocomplcache / jedi -*-
-autocmd BufRead *.php\|*.ctp\|*.tpl :set dictionary=~/.vim/dictionary/php.dict filetype=php
+autocmd BufNewFile,BufRead *.php\|*.ctp\|*.tpl :set dictionary=~/.vim/dictionary/php.dict filetype=php
 autocmd FileType javascript :set dictionary=~/.vim/dictionary/Javascript.dict
+autocmd BufNewFile,BufRead *.html\|*.htm\|*.js setlocal ts=2 sw=2 expandtab
 autocmd FileType python setlocal completeopt-=preview
 autocmd BufNewFile,BufRead *.scala :set dictionary=~/.vim/dictionary/scala.dict filetype=scala
 autocmd BufNewFile,BufRead *.scala setf scala
@@ -271,6 +274,12 @@ inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>"
 
 let g:jedi#completions_enabled = 0
 
+" --- rust "
+let g:rustfmt_autosave = 1
+let g:rustfmt_command = '$HOME/.cargo/bin/rustfmt'
+set hidden
+let g:racer_cmd = '$HOME/.cargo/bin/racer'
+let $RUST_SRC_PATH="/usr/local/Cellar/rust/1.18.0_1/share/src"
 
 " -*- Quickrun -*-
 let g:quickrun_config={
@@ -340,3 +349,7 @@ nnoremap <C-y> :redo<CR>
 let g:multi_cursor_next_key='<C-d>'
 nnoremap <silent><C-p> :set paste<CR>
 nnoremap <silent><S-p> :set nopaste<CR>
+nnoremap <silent><C-n> :set nonumber<CR>
+nnoremap <silent><S-n> :set number<CR>
+nnoremap <silent>O :<C-u>call append(expand('.'), '')<Cr>j
+

@@ -1,0 +1,7 @@
+# gitignore
+.DS_Store
+
+*.swp
+
+zshrc/platform_custom/machine_dependent
+zshrc/platform_custom/terminal_color_settings
