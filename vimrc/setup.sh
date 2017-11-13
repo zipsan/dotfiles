@@ -14,8 +14,8 @@ elif [ `uname` = "FreeBSD" ]; then
   gmake
 fi
 
-mkdir -p ~/settings
-ln -s ~/settings/vimrc ~/.vimrc
+mkdir -p ~/dotfiles
+ln -s ~/dotfiles/vimrc/vimrc ~/.vimrc
 
 vim -c :NeoBundleInstall
 
