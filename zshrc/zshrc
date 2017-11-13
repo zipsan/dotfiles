@@ -1,7 +1,7 @@
 # ====================
 # +  zipsan's zshrc  +
 # ====================
-ZSHRC_BASE_DIR="$HOME/settings/zshrc"
+ZSHRC_BASE_DIR="$HOME/dotfiles/zshrc"
 
 
 
