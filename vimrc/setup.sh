@@ -15,7 +15,7 @@ elif [ `uname` = "FreeBSD" ]; then
 fi
 
 mkdir -p ~/dotfiles
-ln -s ~/dotfiles/vimrc ~/.vimrc
+ln -s ~/dotfiles/vimrc/vimrc ~/.vimrc
 
 vim -c :NeoBundleInstall
 
