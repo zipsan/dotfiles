@@ -140,7 +140,7 @@ alias ........='cd ../../../../'
 alias ..........='cd ../../../../../'
 alias generate_password='/usr/bin/python -c "import sys;import random;import string; print str.join(str(), [random.choice(string.punctuation + string.ascii_letters + string.digits) for i in range(int(sys.argv[1]))])"'
 alias jsonlint='/usr/bin/python -c "import sys;import json;print json.dumps(json.loads(sys.stdin.read()), ensure_ascii=False, indent=4)"'
-
+alias showmask="sh $HOME/dotfiles/zshrc/scripts/show_mask.sh"
 # -*- for typo -*-
 alias sudp='sudo'
 
