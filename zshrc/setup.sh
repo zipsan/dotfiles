@@ -1,4 +1,4 @@
 #!/bin/sh
 
-ln -s $HOME/dotfiles/zshrc/zshrc
+ln -s $HOME/dotfiles/zshrc/zshrc $HOME/.zshrc
 
