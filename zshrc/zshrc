@@ -9,8 +9,13 @@ ZSHRC_BASE_DIR="$HOME/dotfiles/zshrc"
 #  Environment
 # ===================
 export PATH="$PATH:$HOME/.cargo/bin"
-
-
+if [ -x "`which go`" ]; then
+    export GOPATH=$HOME/.go
+    export PATH=$PATH:$GOPATH/bin
+fi
+export PATH="$PATH:$HOME/.bin/"
+export PATH="$HOME/.ndenv/bin:$PATH"
+eval "$(ndenv init -)"
 
 # ===================
 #  load modules
@@ -141,6 +146,8 @@ alias ..........='cd ../../../../../'
 alias generate_password='/usr/bin/python -c "import sys;import random;import string; print str.join(str(), [random.choice(string.punctuation + string.ascii_letters + string.digits) for i in range(int(sys.argv[1]))])"'
 alias jsonlint='/usr/bin/python -c "import sys;import json;print json.dumps(json.loads(sys.stdin.read()), ensure_ascii=False, indent=4)"'
 alias showmask="sh $HOME/dotfiles/zshrc/scripts/show_mask.sh"
+alias sus="sort -r | uniq -c | sort -r"
+
 # -*- for typo -*-
 alias sudp='sudo'
 
@@ -148,10 +155,14 @@ alias sudp='sudo'
 alias gitpsom='git push origin master'
 alias gitplom='git pull origin master'
 alias gitplum='git pull upstream master'
+alias gitpso='git push origin'
 alias gitpsod='git push origin develop'
+alias gitplo='git pull origin'
 alias gitplod='git pull origin develop'
 alias gitplud='git pull upstream develop'
 
+alias gita='git add'
+alias gitat='git add . -A -n'
 alias gitc='git commit -m'
 alias gitb='git branch'
 alias gits='git status'

@@ -12,7 +12,7 @@ set incsearch
 set nocompatible
 set history=10000
 set backspace=indent,eol,start
-set viminfo='20,\"50
+set viminfo='100,<10000,s100,h
 set wildmode=list:full,longest  " completion of filelist
 set whichwrap=b,s,h,l,<,>,[,]
 let &guicursor = &guicursor . ",a:blinkon0"
@@ -218,6 +218,7 @@ set runtimepath+=~/.vim/bundle/neobundle.vim/
     NeoBundle 'tyru/open-browser.vim'
     NeoBundle 'rust-lang/rust.vim'
     NeoBundle 'racer-rust/vim-racer'
+    NeoBundle 'fatih/vim-go'
   call neobundle#end()
 endif
 
@@ -311,6 +312,8 @@ endfunction
 
 autocmd BufNewFile,BufRead *.scala :call ScalaSettings()
 
+" -*- vim-markdown -*-
+let g:vim_markdown_folding_disabled=1
 
 " ==========================
 "  extra color appearance
