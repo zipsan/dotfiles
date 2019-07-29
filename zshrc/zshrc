@@ -8,14 +8,12 @@ ZSHRC_BASE_DIR="$HOME/dotfiles/zshrc"
 # ===================
 #  Environment
 # ===================
-export PATH="$PATH:$HOME/.cargo/bin"
-if [ -x "`which go`" ]; then
-    export GOPATH=$HOME/.go
-    export PATH=$PATH:$GOPATH/bin
+if [ type "pyenv" > /dev/null 2>&1 ]; then
+    export PYENV_ROOT="$HOME/.pyenv"
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init -)"
 fi
-export PATH="$PATH:$HOME/.bin/"
-export PATH="$HOME/.ndenv/bin:$PATH"
-eval "$(ndenv init -)"
+
 
 # ===================
 #  load modules
