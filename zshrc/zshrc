@@ -4,7 +4,6 @@
 ZSHRC_BASE_DIR="$HOME/dotfiles/zshrc"
 
 
-
 # ===================
 #  Environment
 # ===================
@@ -12,16 +11,24 @@ ZSHRC_BASE_DIR="$HOME/dotfiles/zshrc"
 if [ "$(ls ~/.pyenv 2> /dev/null)" ]; then
     export PYENV_ROOT="$HOME/.pyenv"
     export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$(pyenv init -)"
+    eval "$(pyenv init --pyth)"
 fi
 
+export PATH="$PATH:$HOME/.config/bin/"
+export PATH=$HOME/.nodebrew/current/bin:$PATH
+export PATH="/usr/local/sbin:$PATH"
+export NODEBREW_ROOT="$HOME/.nodebrew"
 
 # ===================
 #  load modules
 # ===================
-source ${ZSHRC_BASE_DIR}/modules/*
 
-
+files=`find "${ZSHRC_BASE_DIR}/modules" -type f`
+echo $files | while read line
+do
+    source $line
+done
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # ====================
 #  base setting
@@ -78,7 +85,8 @@ fi
 
 STATUS_PROMPT="%(?.%F{${STATUS_OK_COLOR}}${STATUS_OK_PROMPT}%f.%F{${STATUS_NG_COLOR}}${STATUS_NG_PROMPT}%f)"
 
-PS1="%F{${FIRSTLINE_COLOR}}20%D %* >> %d%f
+PS1="
+%F{${FIRSTLINE_COLOR}}20%D %* >> %d%f
 %F{${MAINLINE_COLOR}}[${USER}@${HOST%%.*}]${STATUS_PROMPT}%F{${MAINLINE_COLOR}}%(!.#.$)%f "
 
 RPROMPT="%F{${SSH_MESSAGE_COLOR}}${SSH_MESSAGE}%f"
@@ -110,6 +118,9 @@ alias py='python'
 alias py2='python2'
 alias py3='python3'
 alias df='df -h'
+alias d='docker'
+alias d-c='docker-compose'
+alias d-ncenter='docker run -it --privileged --pid=host debian nsenter -t 1 -m -u -n -i sh'
 function chpwd() { ls_abbrev }  # ls after cd
 
 
@@ -168,6 +179,7 @@ alias gits='git status'
 alias gitcho='git checkout '
 alias gitm='git merge'
 
+alias docker-rmall-containers='docker rm -f $(docker ps -a -q)'
 
 # ====================
 #  Completion
@@ -246,3 +258,5 @@ if [ -e $MACHINE_DEPENDENT_SETTINGS_FILEPATH ]; then
   source $MACHINE_DEPENDENT_SETTINGS_FILEPATH 2>&1 /dev/null
 fi
 
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

@@ -3,3 +3,6 @@ alias grep="grep --color=always"
 alias l='ls -oFG'
 alias ll='ls -lAFoG'
 alias ps="ps"
+alias airport="/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport"
+alias rm="trash"
+alias lsusb="system_profiler SPUSBDataType"
