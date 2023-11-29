@@ -1,6 +1,7 @@
 # ====================
 # +  zipsan's zshrc  +
 # ====================
+DOTFILES_BASE_DIR="$HOME/dotfiles"
 ZSHRC_BASE_DIR="$HOME/dotfiles/zshrc"
 
 
@@ -11,13 +12,20 @@ ZSHRC_BASE_DIR="$HOME/dotfiles/zshrc"
 if [ "$(ls ~/.pyenv 2> /dev/null)" ]; then
     export PYENV_ROOT="$HOME/.pyenv"
     export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$(pyenv init --pyth)"
+    eval "$(pyenv init --path)"
+    eval "$(pyenv init -)"
+fi
+if [ "$(ls ~/.goenv 2> /dev/null)" ]; then
+    export GOENV_ROOT="$HOME/.goenv"
+    export PATH="$GOENV_ROOT/bin:$PATH"
+    eval "$(goenv init -)"
 fi
 
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 export PATH="$PATH:$HOME/.config/bin/"
-export PATH=$HOME/.nodebrew/current/bin:$PATH
-export PATH="/usr/local/sbin:$PATH"
-export NODEBREW_ROOT="$HOME/.nodebrew"
+export PATH="$PATH:$DOTFILES_BASE_DIR/commands/"
+export PATH="/opt/homebrew/opt/openssl@3/bin:$PATH"
 
 # ===================
 #  load modules
@@ -26,7 +34,10 @@ export NODEBREW_ROOT="$HOME/.nodebrew"
 files=`find "${ZSHRC_BASE_DIR}/modules" -type f`
 echo $files | while read line
 do
-    source $line
+    GREP_RESULT=`echo "$line" | grep ".DS_Store"`
+    if [ "$GREP_RESULT" = "" ]; then
+        source $line
+    fi
 done
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
@@ -54,7 +65,7 @@ setopt globdots
 #  History
 # ====================
 HISTCONTROL=ignoredups:ignorespace
-HISTFILE=$HOME/.zsh-history
+HISTFILE=$HOME/.zsh_history
 HISTSIZE=100000
 SAVEHIST=100000
 
@@ -157,6 +168,8 @@ alias generate_password='/usr/bin/python -c "import sys;import random;import str
 alias jsonlint='/usr/bin/python -c "import sys;import json;print json.dumps(json.loads(sys.stdin.read()), ensure_ascii=False, indent=4)"'
 alias showmask="sh $HOME/dotfiles/zshrc/scripts/show_mask.sh"
 alias sus="sort -r | uniq -c | sort -r"
+alias activate="source ./venv/bin/activate"
+
 
 # -*- for typo -*-
 alias sudp='sudo'
