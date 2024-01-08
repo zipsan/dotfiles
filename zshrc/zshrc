@@ -21,11 +21,13 @@ if [ "$(ls ~/.goenv 2> /dev/null)" ]; then
     eval "$(goenv init -)"
 fi
 
-eval "$(/opt/homebrew/bin/brew shellenv)"
 
 export PATH="$PATH:$HOME/.config/bin/"
 export PATH="$PATH:$DOTFILES_BASE_DIR/commands/"
-export PATH="/opt/homebrew/opt/openssl@3/bin:$PATH"
+
+export DENO_INSTALL="$HOME/.deno"
+export PATH="$PATH:$DENO_INSTALL/bin"
+
 
 # ===================
 #  load modules
@@ -39,6 +41,8 @@ do
         source $line
     fi
 done
+
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#ff00ff"
 source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # ====================
@@ -143,6 +147,7 @@ alias findr='sudo find / -name'
 alias loadzsh='source ~/.zshrc'
 alias vimzsh='vim ~/.zshrc'
 alias vimvim='vim ~/.vimrc'
+alias vimtmux='vim ~/.tmux.conf'
 alias cdn='cd `find -mindepth 1 -maxdepth 1 -type d | xargs ls -td | head -n 1`' # cd to the latest created dir
 alias wget-recursive="wget \
 --recursive \
@@ -194,6 +199,7 @@ alias gitm='git merge'
 
 alias docker-rmall-containers='docker rm -f $(docker ps -a -q)'
 
+alias python='python3'
 # ====================
 #  Completion
 # ====================

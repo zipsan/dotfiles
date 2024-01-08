@@ -106,6 +106,7 @@ call plug#begin()
     Plug 'Shougo/ddc-matcher_head'
     Plug 'Shougo/ddc-sorter_rank'
     Plug 'Shougo/ddc-converter_remove_overlap'
+    Plug 'LumaKernel/ddc-source-file'
 call plug#end()
 
 " --------------------------
@@ -145,6 +146,7 @@ inoremap <silent><expr> <TAB>
 inoremap <expr><S-TAB>  pumvisible() ? '<C-p>' : '<C-h>'
 " Use ddc.
 call ddc#enable()
+
 
 " -*- Quickrun -*-
 let g:quickrun_config={
