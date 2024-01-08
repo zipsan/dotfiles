@@ -148,6 +148,7 @@ alias loadzsh='source ~/.zshrc'
 alias vimzsh='vim ~/.zshrc'
 alias vimvim='vim ~/.vimrc'
 alias vimtmux='vim ~/.tmux.conf'
+alias vimssh='vim ~/.ssh/config'
 alias cdn='cd `find -mindepth 1 -maxdepth 1 -type d | xargs ls -td | head -n 1`' # cd to the latest created dir
 alias wget-recursive="wget \
 --recursive \
