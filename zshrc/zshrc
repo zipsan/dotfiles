@@ -28,6 +28,8 @@ export PATH="$PATH:$DOTFILES_BASE_DIR/commands/"
 export DENO_INSTALL="$HOME/.deno"
 export PATH="$PATH:$DENO_INSTALL/bin"
 
+# zoxide
+eval "$(zoxide init zsh)"
 
 # ===================
 #  load modules
