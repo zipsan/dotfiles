@@ -7,12 +7,24 @@ local scrollback_lines = 200000;
 
 local config = {}
 
+
 if wezterm.config_builder then
   config = wezterm.config_builder()
 end
 
+-- デフォルトをPowerShellへ
+config.default_prog = { 'pwsh.exe' }
+
 -- カラースキームの設定
 config.color_scheme = 'OneHalfDark'
+
+-- 色設定
+config.colors = {
+  -- オプション(--op)が暗すぎるので変更
+  -- default: [0] #282c34 -> 848C9E
+  brights = { "#848C9E","#e06c75","#98c379","#e5c07b","#61afef","#c678dd","#56b6c2","#dcdfe4" }
+}
+
 
 -- 背景透過
 config.window_background_opacity = 0.9
@@ -104,6 +116,10 @@ config.keys = {
     mods = 'LEADER',
     action = wezterm.action.ActivatePaneDirection 'Right',
   },
+  {key="LeftArrow", mods="LEADER", action=wezterm.action{ActivatePaneDirection="Left"}},
+  {key="RightArrow", mods="LEADER", action=wezterm.action{ActivatePaneDirection="Right"}},
+  {key="UpArrow", mods="LEADER", action=wezterm.action{ActivatePaneDirection="Up"}},
+  {key="DownArrow", mods="LEADER", action=wezterm.action{ActivatePaneDirection="Down"}},
 }
 
 return config
