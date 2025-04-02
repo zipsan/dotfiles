@@ -57,3 +57,28 @@ vim.cmd("highlight LineNr guifg=#8a70ac")
 
 -- カーソルの形状
 vim.o.guicursor = "n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20"
+
+-- 一般的なオプション設定
+vim.opt.scrolloff = 8         -- スクロール時の上下の余白
+vim.opt.sidescrolloff = 8     -- 左右スクロール時の余白
+vim.opt.signcolumn = "yes"  -- signcolumnを常に表示
+vim.opt.cursorline = true    -- カーソル行をハイライト
+vim.opt.clipboard = "unnamedplus" -- システムクリップボードと連携 (+レジスタ)
+vim.opt.splitbelow = true     -- 新しいウィンドウを下側に開く
+vim.opt.splitright = true      -- 新しいウィンドウを右側に開く
+vim.opt.mouse = "a"          -- マウスを有効化
+vim.opt.backup = false
+vim.opt.writebackup = false
+vim.opt.swapfile = false
+vim.opt.updatetime = 300
+vim.opt.timeoutlen = 500
+vim.opt.completeopt = { "menu", "menuone", "noselect" }
+
+-- キーマッピング (例)
+vim.g.mapleader = " "       -- リーダーキーをスペースに設定
+vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)   -- <leader>pv でファイルエクスプローラーを開く
+vim.keymap.set("n", "<C-s>", ":w<CR>")           -- Ctrl+S で保存
+vim.keymap.set("i", "<C-s>", "<Esc>:w<CR>a")    -- 挿入モードで Ctrl+S で保存
+vim.keymap.set("n", "<leader>ff", ":Telescope find_files<CR>") -- Telescopeでファイル検索
+vim.keymap.set("n", "<leader>fg", ":Telescope live_grep<CR>") -- TelescopeでGrep検索
+

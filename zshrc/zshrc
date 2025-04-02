@@ -22,11 +22,17 @@ if [ "$(ls ~/.goenv 2> /dev/null)" ]; then
 fi
 
 
-export PATH="$PATH:$HOME/.config/bin/"
+export PATH="$HOME/.config/bin/:$PATH"
 export PATH="$PATH:$DOTFILES_BASE_DIR/commands/"
 
 export DENO_INSTALL="$HOME/.deno"
 export PATH="$PATH:$DENO_INSTALL/bin"
+
+# Nodenv
+if [ "$(ls ~/.nodenv 2> /dev/null)" ]; then
+    export PATH="$HOME/.nodenv/bin:$PATH"
+    eval "$(nodenv init -)"
+fi
 
 # zoxide
 eval "$(zoxide init zsh)"
@@ -81,7 +87,8 @@ SAVEHIST=100000
 #  Prompt(PS)
 # ====================
 FIRSTLINE_COLOR=yellow
-MAINLINE_COLOR=cyan
+# MAINLINE_COLOR=cyan
+MAINLINE_COLOR=green
 SSH_MESSAGE_COLOR=blue
 STATUS_OK_COLOR=cyan
 STATUS_OK_PROMPT=":)"
